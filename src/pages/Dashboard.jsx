@@ -1,4 +1,4 @@
-import { useQuery, gql, useMutation, useLazyQuery } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 
 const FETCH_PATIENTS_DATA = gql`
   query fetchPatientsData {
@@ -32,18 +32,27 @@ const REMOVE_PATIENT_DATA = gql`
   }
 `;
 function Dashboard() {
-  const { data, loading, error } = useQuery(FETCH_PATIENTS_DATA);
+  const { data, loading, error ,refetch} = useQuery(FETCH_PATIENTS_DATA,{
+    fetchPolicy:"network-only"
+  });
 
   const [removePatientData] = useMutation(REMOVE_PATIENT_DATA, {
     refetchQueries: ["fetchPatientsData"],
   });
+
+
+
 
   if (loading) return <p>Loading....</p>;
   if (error) return <p>{error.message}</p>;
 
   return (
     <div className="px-2 overflow-x-scroll">
-    
+      <div className="my-4 grid place-items-center">
+        <button className="btn btn--primary" onClick={()=>refetch()}>
+          Refresh
+        </button>
+      </div>
       <table className="divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
